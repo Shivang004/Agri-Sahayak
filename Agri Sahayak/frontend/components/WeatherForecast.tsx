@@ -22,7 +22,10 @@ import {
   Legend
 } from 'chart.js';
 import { Line, Bar } from 'react-chartjs-2';
-import { format } from 'date-fns';
+import { format, type Locale } from 'date-fns';
+import { enUS, hi, te, ta } from 'date-fns/locale';
+import pa from '@/lib/locales/pa'; // Import custom Punjabi locale
+import mr from '@/lib/locales/mr'; // Import custom Marathi locale
 
 ChartJS.register(
   CategoryScale,
@@ -35,11 +38,21 @@ ChartJS.register(
   Legend
 );
 
+// Add the custom locales to the mapping
+const dateLocales: { [key: string]: Locale } = {
+  en: enUS,
+  hi: hi,
+  pa: pa,
+  mr: mr,
+  te: te,
+  ta: ta,
+};
+
 export default function WeatherForecast() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [location, setLocation] = useState<LocationData | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [locationPermission, setLocationPermission] = useState<boolean | null>(null);
 
@@ -52,12 +65,9 @@ export default function WeatherForecast() {
     setError('');
 
     try {
-      // Get user's location
       const userLocation = await getCurrentLocation();
       setLocation(userLocation);
       setLocationPermission(true);
-
-      // Fetch weather data
       const data = await fetchWeatherData(userLocation.latitude, userLocation.longitude);
       setWeatherData(data);
     } catch (err) {
@@ -70,7 +80,6 @@ export default function WeatherForecast() {
   };
 
   const getWeatherIcon = (code: number, isDay: boolean = true) => {
-    // Simple weather icon mapping
     if (code >= 0 && code <= 3) return isDay ? '☀️' : '🌙';
     if (code >= 45 && code <= 48) return '🌫️';
     if (code >= 51 && code <= 67) return '🌧️';
@@ -78,6 +87,8 @@ export default function WeatherForecast() {
     if (code >= 80 && code <= 99) return '⛈️';
     return '🌤️';
   };
+  
+  const currentLocale = dateLocales[language] || enUS;
 
   const temperatureChartData = weatherData ? {
     labels: weatherData.hourly.time.slice(0, 24).map(time => 
@@ -85,14 +96,14 @@ export default function WeatherForecast() {
     ),
     datasets: [
       {
-        label: `${t('temperature')} (°C)`,
+        label: `${t('temperature')} (${t('temperatureUnit')})`,
         data: weatherData.hourly.temperature_2m.slice(0, 24),
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.1)',
         tension: 0.1
       },
       {
-        label: `${t('feelsLike')} (°C)`,
+        label: `${t('feelsLike')} (${t('temperatureUnit')})`,
         data: weatherData.hourly.apparent_temperature.slice(0, 24),
         borderColor: 'rgb(54, 162, 235)',
         backgroundColor: 'rgba(54, 162, 235, 0.1)',
@@ -103,11 +114,11 @@ export default function WeatherForecast() {
 
   const precipitationChartData = weatherData ? {
     labels: weatherData.daily.time.map(time => 
-      format(new Date(time), 'MMM dd')
+      format(new Date(time), 'MMM dd', { locale: currentLocale })
     ),
     datasets: [
       {
-        label: `${t('precipitation')} (mm)`,
+        label: `${t('precipitation')} (${t('precipitationUnit')})`,
         data: weatherData.daily.precipitation_sum,
         backgroundColor: 'rgba(75, 192, 192, 0.5)',
         borderColor: 'rgb(75, 192, 192)',
@@ -116,7 +127,7 @@ export default function WeatherForecast() {
     ]
   } : null;
 
-  const agricultureInsights = weatherData ? getAgricultureInsights(weatherData) : null;
+  const agricultureInsights = weatherData ? getAgricultureInsights(weatherData, t) : null;
 
   if (loading) {
     return (
@@ -175,7 +186,7 @@ export default function WeatherForecast() {
               {Math.round(weatherData.current.temperature_2m)}°C
             </div>
             <div className="text-sm text-gray-600">
-              {getWeatherDescription(weatherData.current.weather_code)}
+              {getWeatherDescription(weatherData.current.weather_code, t)}
             </div>
           </div>
 
@@ -239,7 +250,7 @@ export default function WeatherForecast() {
         <div className="bg-white rounded-lg border p-6">
           <h3 className="text-lg font-semibold mb-4">{t('agricultureInsights')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="p-4 bg-blue-50 rounded-lg">
+              <div className="p-4 bg-blue-50 rounded-lg">
                 <div className="font-semibold text-blue-800 mb-2">{t('irrigation')}</div>
                 <div className="text-sm text-blue-700">{agricultureInsights.irrigation}</div>
               </div>
@@ -272,14 +283,14 @@ export default function WeatherForecast() {
                   legend: { display: true },
                   title: {
                     display: true,
-                    text: 'Temperature Forecast'
+                    text: t('temperatureForecast')
                   }
                 },
                 scales: {
                   y: {
                     title: {
                       display: true,
-                      text: '°C'
+                      text: t('temperatureUnit')
                     }
                   }
                 }
@@ -299,7 +310,7 @@ export default function WeatherForecast() {
                   legend: { display: true },
                   title: {
                     display: true,
-                    text: 'Precipitation Forecast'
+                    text: t('precipitationForecast')
                   }
                 },
                 scales: {
@@ -307,7 +318,7 @@ export default function WeatherForecast() {
                     beginAtZero: true,
                     title: {
                       display: true,
-                      text: 'mm'
+                      text: t('precipitationUnit')
                     }
                   }
                 }
@@ -319,12 +330,12 @@ export default function WeatherForecast() {
 
       {/* Daily Forecast */}
       <div className="bg-white rounded-lg border p-6">
-                  <h3 className="text-lg font-semibold mb-4">{t('sevenDayForecast')}</h3>
+        <h3 className="text-lg font-semibold mb-4">{t('sevenDayForecast')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
           {weatherData.daily.time.map((date, index) => (
             <div key={date} className="text-center p-3 bg-gray-50 rounded">
               <div className="text-sm font-medium text-gray-600">
-                {format(new Date(date), 'EEE')}
+                {format(new Date(date), 'EEE', { locale: currentLocale })} 
               </div>
               <div className="text-2xl my-2">
                 {getWeatherIcon(weatherData.daily.weather_code[index])}
@@ -345,3 +356,4 @@ export default function WeatherForecast() {
     </div>
   );
 }
+
