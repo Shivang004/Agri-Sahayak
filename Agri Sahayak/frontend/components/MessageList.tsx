@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useTextToSpeech } from '@/hooks/useTextToSpeech';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export type ChatMessage = {
   id: string;
@@ -11,6 +12,7 @@ export type ChatMessage = {
 
 export default function MessageList({ messages }: { messages: ChatMessage[] }) {
   const { speak } = useTextToSpeech();
+  const { language } = useLanguage();
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -33,7 +35,7 @@ export default function MessageList({ messages }: { messages: ChatMessage[] }) {
               <button
                 aria-label="Speak message"
                 className="ml-2 text-gray-500 hover:text-gray-800"
-                onClick={() => speak(msg.content)}
+                onClick={() => speak(msg.content, language)}
                 title="Read aloud"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
