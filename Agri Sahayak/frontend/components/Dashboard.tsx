@@ -24,6 +24,8 @@ ChartJS.register(
   Legend
 );
 
+import { useLanguage } from '@/lib/LanguageContext';
+
 export default function Dashboard({
   weatherData,
   marketData
@@ -31,6 +33,7 @@ export default function Dashboard({
   weatherData: { labels: string[]; values: number[] };
   marketData: { labels: string[]; values: number[] };
 }) {
+  const { t } = useLanguage();
   const weatherChartData = {
     labels: weatherData.labels,
     datasets: [
@@ -57,11 +60,11 @@ export default function Dashboard({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div className="rounded-lg border bg-white p-4">
-        <h3 className="mb-2 text-sm font-semibold">7-Day Weather Forecast</h3>
+        <h3 className="mb-2 text-sm font-semibold">{t('forecast')}</h3>
         <Line data={weatherChartData} options={{ responsive: true, plugins: { legend: { display: true } } }} />
       </div>
       <div className="rounded-lg border bg-white p-4">
-        <h3 className="mb-2 text-sm font-semibold">Local Market Prices</h3>
+        <h3 className="mb-2 text-sm font-semibold">{t('marketPrices')}</h3>
         <Bar data={marketChartData} options={{ responsive: true, plugins: { legend: { display: true } } }} />
       </div>
     </div>

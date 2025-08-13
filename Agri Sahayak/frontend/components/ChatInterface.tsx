@@ -1,11 +1,13 @@
 "use client";
 
 import { useCallback, useState } from 'react';
+import { useLanguage } from '@/lib/LanguageContext';
 import MessageList, { ChatMessage } from './MessageList';
 import ChatInput from './ChatInput';
 import { postQuery } from '@/lib/api';
 
 export default function ChatInterface() {
+  const { t } = useLanguage();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -21,7 +23,7 @@ export default function ChatInterface() {
       const aiMessage: ChatMessage = {
         id: crypto.randomUUID(),
         role: 'assistant',
-        content: 'Sorry, something went wrong while contacting the server.'
+        content: t('sorryError')
       };
       setMessages((prev) => [...prev, aiMessage]);
     } finally {
@@ -32,12 +34,12 @@ export default function ChatInterface() {
   return (
     <div className="flex h-full flex-col rounded-lg border bg-white">
       <div className="border-b p-4">
-        <h2 className="text-lg font-semibold">Dr. Fasal Assistant</h2>
-        <p className="text-xs text-gray-500">Ask questions about crops, pests, weather, and more.</p>
+        <h2 className="text-lg font-semibold">{t('assistantTitle')}</h2>
+        <p className="text-xs text-gray-500">{t('assistantDescription')}</p>
       </div>
       <MessageList messages={messages} />
       {isLoading && (
-        <div className="px-4 pb-2 text-xs text-gray-500">Generating response…</div>
+        <div className="px-4 pb-2 text-xs text-gray-500">{t('generatingResponse')}</div>
       )}
       <ChatInput onSend={handleSend} />
     </div>
