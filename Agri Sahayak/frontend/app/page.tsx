@@ -8,6 +8,7 @@ import FertilizerTool from '@/components/FertilizerTool';
 import MarketData from '@/components/MarketData';
 import WeatherForecast from '@/components/WeatherForecast';
 import LanguageSelector from '@/components/LanguageSelector';
+import LanguageChangeNotification from '@/components/LanguageChangeNotification';
 
 export default function Page() {
   const { t } = useLanguage();
@@ -24,10 +25,11 @@ export default function Page() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="flex h-screen flex-col bg-gray-50">
+      
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <header className="flex-shrink-0 border-b bg-white shadow-sm">
+        <div className="mx-auto max-w-7xl px-4 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-green-600">{t('title')}</h1>
             <LanguageSelector />
@@ -35,9 +37,9 @@ export default function Page() {
         </div>
       </header>
 
-      {/* Navigation Tabs */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4">
+      {/* Restore the Navigation Tabs */}
+      <div className="flex-shrink-0 border-b bg-white">
+        <div className="mx-auto max-w-7xl px-4">
           <nav className="flex space-x-8">
             <button
               onClick={() => setActiveTab('chat')}
@@ -73,33 +75,31 @@ export default function Page() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        {activeTab === 'chat' && (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <section className="md:col-span-2 flex min-h-[70vh] flex-col">
-              <ChatInterface />
-            </section>
-            <aside className="flex flex-col gap-4">
-              <Dashboard weatherData={weatherData} marketData={marketData} />
-              <FertilizerTool />
-            </aside>
-          </div>
-        )}
-
-        {activeTab === 'market' && (
-          <div className="space-y-6">
-            <MarketData />
-          </div>
-        )}
-
-        {activeTab === 'weather' && (
-          <div className="space-y-6">
-            <WeatherForecast />
-          </div>
-        )}
+      {/* Main Content Area */}
+      <div className="flex-grow overflow-hidden p-6">
+        <div className="mx-auto h-full max-w-7xl">
+          {activeTab === 'chat' ? (
+            // If 'chat' is active, show the split-screen layout
+            <div className="flex h-full gap-6">
+              <div className="flex w-2/3 flex-col">
+                <ChatInterface />
+              </div>
+              <div className="w-1/3 overflow-y-auto">
+                <aside className="flex flex-col space-y-6">
+                  <Dashboard weatherData={weatherData} marketData={marketData} />
+                  <FertilizerTool />
+                </aside>
+              </div>
+            </div>
+          ) : (
+            // Otherwise, show the full-width scrollable layout for other tabs
+            <div className="h-full overflow-y-auto">
+              {activeTab === 'market' && <MarketData />}
+              {activeTab === 'weather' && <WeatherForecast />}
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );
 }
-

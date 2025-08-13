@@ -17,8 +17,12 @@ export default function ChatInterface() {
   const handleSend = useCallback(async ({ text, imageUrl }: { text: string; imageUrl?: string | null }) => {
     if (!text.trim()) return;
 
-    // 1. Add user's original message to UI
-    const userMessage: ChatMessage = { id: crypto.randomUUID(), role: 'user', content: text };
+    const userMessage: ChatMessage = { 
+      id: crypto.randomUUID(), 
+      role: 'user', 
+      content: text, 
+      imageUrl: imageUrl || null // Include the imageUrl here
+    };
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
@@ -56,16 +60,19 @@ export default function ChatInterface() {
 
   return (
     <div className="flex h-full flex-col rounded-lg border bg-white">
-      <div className="border-b p-4">
+      <div className="border-b p-4 flex-shrink-0">
         <h2 className="text-lg font-semibold">{t('assistantTitle')}</h2>
         <p className="text-xs text-gray-500">{t('assistantDescription')}</p>
       </div>
+
+      {/* MessageList grows to fill available space and becomes scrollable */}
       <MessageList messages={messages} />
+
+      {/* The input form remains fixed at the bottom */}
       {isLoading && (
-        <div className="px-4 pb-2 text-xs text-gray-500">{t('generatingResponse')}</div>
+        <div className="px-4 pb-2 text-xs text-gray-500 flex-shrink-0">{t('generatingResponse')}</div>
       )}
       <ChatInput onSend={handleSend} />
     </div>
   );
 }
-

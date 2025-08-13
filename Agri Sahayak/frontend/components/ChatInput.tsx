@@ -43,8 +43,14 @@ export default function ChatInput({
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    const url = URL.createObjectURL(file);
-    setImageUrl(url);
+  
+    // Use FileReader to convert the image to a Base64 string
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      // The result is a Base64 data URL (e.g., "data:image/png;base64,...")
+      setImageUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   }
 
   function toggleMic() {
