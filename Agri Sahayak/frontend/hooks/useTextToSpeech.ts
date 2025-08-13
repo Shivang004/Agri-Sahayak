@@ -39,4 +39,3 @@ export function useTextToSpeech() {
 
   return { isSupported, speak };
 }
-
