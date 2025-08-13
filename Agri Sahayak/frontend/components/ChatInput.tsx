@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from 'react';
+import { useLanguage } from '@/lib/LanguageContext';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 
 export default function ChatInput({
@@ -8,10 +9,11 @@ export default function ChatInput({
 }: {
   onSend: (payload: { text: string; imageUrl?: string | null }) => void;
 }) {
+  const { language, t } = useLanguage();
   const [text, setText] = useState('');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const { isSupported, isListening, transcript, startListening, stopListening } = useSpeechToText();
+  const { isSupported, isListening, transcript, startListening, stopListening, clearTranscript } = useSpeechToText();
 
   useEffect(() => {
     if (transcript) {
@@ -23,8 +25,15 @@ export default function ChatInput({
     e.preventDefault();
     const trimmed = text.trim();
     if (!trimmed) return;
+    
+    // Stop listening if currently active
+    if (isListening) {
+      stopListening();
+    }
+    
     onSend({ text: trimmed, imageUrl });
     setText('');
+    clearTranscript(); // Clear speech transcript after sending
   }
 
   function handlePickImage() {
@@ -40,8 +49,15 @@ export default function ChatInput({
 
   function toggleMic() {
     if (!isSupported) return;
-    if (isListening) stopListening();
-    else startListening();
+    if (isListening) {
+      stopListening();
+    } else {
+      // If starting fresh and there's existing text, clear it
+      if (text.trim() === '') {
+        clearTranscript();
+      }
+      startListening(language);
+    }
   }
 
   return (
@@ -58,15 +74,21 @@ export default function ChatInput({
           type="button"
           onClick={handlePickImage}
           className="rounded-md border px-3 py-2 text-sm hover:bg-gray-50"
-          title="Upload image"
+          title={t('uploadImage')}
         >
-          Image
+          {t('image')}
         </button>
         <div className="relative flex-1">
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Ask Dr. Fasal..."
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e as any);
+              }
+            }}
+            placeholder={t('placeholder')}
             className="w-full rounded-md border px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
           />
           <button
@@ -75,7 +97,7 @@ export default function ChatInput({
             className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 ${
               isListening ? 'bg-red-100 text-red-600' : 'text-gray-500 hover:text-gray-800'
             }`}
-            title={isSupported ? (isListening ? 'Stop listening' : 'Start listening') : 'Speech not supported'}
+            title={isSupported ? (isListening ? t('stopListening') : t('startListening')) : t('speechNotSupported')}
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
               <path d="M12 14a3 3 0 003-3V7a3 3 0 10-6 0v4a3 3 0 003 3z" />
@@ -85,14 +107,14 @@ export default function ChatInput({
           </button>
         </div>
         <button type="submit" className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700">
-          Send
+          {t('send')}
         </button>
       </div>
       {imageUrl && (
         <div className="mt-2 flex items-center gap-3">
           <img src={imageUrl} alt="Selected" className="h-12 w-12 rounded object-cover" />
           <button type="button" className="text-xs text-red-600 hover:underline" onClick={() => setImageUrl(null)}>
-            Remove image
+            {t('removeImage')}
           </button>
         </div>
       )}

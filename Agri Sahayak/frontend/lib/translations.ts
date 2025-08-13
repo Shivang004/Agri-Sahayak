@@ -11,6 +11,9 @@ export const languages = {
 
 export const translations = {
   en: {
+    // Common
+    title: 'Agri Sahayak',
+    
     // Navigation
     dashboard: 'Dashboard',
     marketPrices: 'Market Prices',
@@ -35,6 +38,10 @@ export const translations = {
     toDate: 'To Date',
     loadData: 'Load Data',
     noDataAvailable: 'No data available',
+    dataSummary: 'Data Summary',
+    averagePrice: 'Average Price',
+    averageQuantity: 'Average Quantity',
+    dataPoints: 'Data Points',
     
     // Weather
     currentWeather: 'Current Weather',
@@ -51,6 +58,16 @@ export const translations = {
     uvIndex: 'UV Index',
     sunrise: 'Sunrise',
     sunset: 'Sunset',
+    soilTemperature: 'Soil Temperature',
+    soilMoisture: 'Soil Moisture',
+    agricultureInsights: 'Agriculture Insights',
+    irrigation: 'Irrigation',
+    cropHealth: 'Crop Health',
+    pestRisk: 'Pest Risk',
+    harvestTiming: 'Harvest Timing',
+    temperatureForecast: '24-Hour Temperature Forecast',
+    precipitationForecast: '7-Day Precipitation Forecast',
+    sevenDayForecast: '7-Day Forecast',
     
     // Language
     language: 'Language',
@@ -67,10 +84,21 @@ export const translations = {
     assistantTitle: 'Dr. Fasal Assistant',
     assistantDescription: 'Ask questions about crops, pests, weather, and more.',
     generatingResponse: 'Generating response…',
-    sorryError: 'Sorry, something went wrong while contacting the server.'
+    sorryError: 'Sorry, something went wrong while contacting the server.',
+    placeholder: 'Ask me anything...',
+    send: 'Send',
+    image: 'Image',
+    removeImage: 'Remove image',
+    uploadImage: 'Upload image',
+    startListening: 'Start listening',
+    stopListening: 'Stop listening',
+    speechNotSupported: 'Speech not supported'
   },
   
   hi: {
+    // Common
+    title: 'कृषि सहायक',
+    
     // Navigation
     dashboard: 'डैशबोर्ड',
     marketPrices: 'बाजार मूल्य',
@@ -95,6 +123,10 @@ export const translations = {
     toDate: 'समाप्ति तिथि',
     loadData: 'डेटा लोड करें',
     noDataAvailable: 'कोई डेटा उपलब्ध नहीं',
+    dataSummary: 'डेटा सारांश',
+    averagePrice: 'औसत मूल्य',
+    averageQuantity: 'औसत मात्रा',
+    dataPoints: 'डेटा बिंदु',
     
     // Weather
     currentWeather: 'वर्तमान मौसम',
@@ -111,6 +143,16 @@ export const translations = {
     uvIndex: 'यूवी सूचकांक',
     sunrise: 'सूर्योदय',
     sunset: 'सूर्यास्त',
+    soilTemperature: 'मिट्टी का तापमान',
+    soilMoisture: 'मिट्टी की नमी',
+    agricultureInsights: 'कृषि अंतर्दृष्टि',
+    irrigation: 'सिंचाई',
+    cropHealth: 'फसल स्वास्थ्य',
+    pestRisk: 'कीट जोखिम',
+    harvestTiming: 'फसल कटाई का समय',
+    temperatureForecast: '24 घंटे का तापमान पूर्वानुमान',
+    precipitationForecast: '7 दिन का वर्षा पूर्वानुमान',
+    sevenDayForecast: '7 दिन का पूर्वानुमान',
     
     // Language
     language: 'भाषा',
@@ -127,10 +169,21 @@ export const translations = {
     assistantTitle: 'डॉ. फसल सहायक',
     assistantDescription: 'फसलों, कीटों, मौसम और अधिक के बारे में प्रश्न पूछें।',
     generatingResponse: 'प्रतिक्रिया तैयार हो रही है…',
-    sorryError: 'क्षमा करें, सर्वर से संपर्क करते समय कुछ गलत हो गया।'
+    sorryError: 'क्षमा करें, सर्वर से संपर्क करते समय कुछ गलत हो गया।',
+    placeholder: 'मुझसे कुछ भी पूछें...',
+    send: 'भेजें',
+    image: 'छवि',
+    removeImage: 'छवि हटाएं',
+    uploadImage: 'छवि अपलोड करें',
+    startListening: 'सुनना शुरू करें',
+    stopListening: 'सुनना बंद करें',
+    speechNotSupported: 'भाषण समर्थित नहीं है'
   },
   
   pa: {
+    // Common
+    title: 'ਕ੍ਰਿਸ਼ੀ ਸਹਾਇਕ',
+    
     // Navigation
     dashboard: 'ਡੈਸ਼ਬੋਰਡ',
     marketPrices: 'ਮਾਰਕੀਟ ਕੀਮਤਾਂ',
@@ -155,6 +208,10 @@ export const translations = {
     toDate: 'ਤੱਕ ਤਾਰੀਖ',
     loadData: 'ਡੇਟਾ ਲੋਡ ਕਰੋ',
     noDataAvailable: 'ਕੋਈ ਡੇਟਾ ਉਪਲਬਧ ਨਹੀਂ',
+    dataSummary: 'ਡੇਟਾ ਸਾਰਾਂਸ਼',
+    averagePrice: 'ਔਸਤ ਕੀਮਤ',
+    averageQuantity: 'ਔਸਤ ਮਾਤਰਾ',
+    dataPoints: 'ਡੇਟਾ ਬਿੰਦੂ',
     
     // Weather
     currentWeather: 'ਮੌਜੂਦਾ ਮੌਸਮ',
@@ -171,6 +228,16 @@ export const translations = {
     uvIndex: 'ਯੂਵੀ ਇੰਡੈਕਸ',
     sunrise: 'ਸੂਰਜ ਚੜ੍ਹਨਾ',
     sunset: 'ਸੂਰਜ ਡੁੱਬਣਾ',
+    soilTemperature: 'ਮਿੱਟੀ ਦਾ ਤਾਪਮਾਨ',
+    soilMoisture: 'ਮਿੱਟੀ ਦੀ ਨਮੀ',
+    agricultureInsights: 'ਖੇਤੀਬਾੜੀ ਅੰਤਰਦ੍ਰਿਸ਼ਟੀ',
+    irrigation: 'ਸਿੰਚਾਈ',
+    cropHealth: 'ਫਸਲ ਸਿਹਤ',
+    pestRisk: 'ਕੀੜੇ ਦਾ ਖਤਰਾ',
+    harvestTiming: 'ਕਟਾਈ ਦਾ ਸਮਾਂ',
+    temperatureForecast: '24 ਘੰਟੇ ਦਾ ਤਾਪਮਾਨ ਪੂਰਵਾਨੁਮਾਨ',
+    precipitationForecast: '7 ਦਿਨ ਦਾ ਮੀਂਹ ਪੂਰਵਾਨੁਮਾਨ',
+    sevenDayForecast: '7 ਦਿਨ ਦਾ ਪੂਰਵਾਨੁਮਾਨ',
     
     // Language
     language: 'ਭਾਸ਼ਾ',
@@ -187,10 +254,21 @@ export const translations = {
     assistantTitle: 'ਡਾ. ਫਸਲ ਸਹਾਇਕ',
     assistantDescription: 'ਫਸਲਾਂ, ਕੀੜਿਆਂ, ਮੌਸਮ ਅਤੇ ਹੋਰ ਬਾਰੇ ਪ੍ਰਸ਼ਨ ਪੁੱਛੋ।',
     generatingResponse: 'ਜਵਾਬ ਤਿਆਰ ਹੋ ਰਿਹਾ ਹੈ…',
-    sorryError: 'ਮਾਫ਼ ਕਰੋ, ਸਰਵਰ ਨਾਲ ਸੰਪਰਕ ਕਰਦੇ ਸਮੇਂ ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ।'
+    sorryError: 'ਮਾਫ਼ ਕਰੋ, ਸਰਵਰ ਨਾਲ ਸੰਪਰਕ ਕਰਦੇ ਸਮੇਂ ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ।',
+    placeholder: 'ਮੈਨੂੰ ਕੁਝ ਵੀ ਪੁੱਛੋ...',
+    send: 'ਭੇਜੋ',
+    image: 'ਚਿੱਤਰ',
+    removeImage: 'ਚਿੱਤਰ ਹਟਾਓ',
+    uploadImage: 'ਚਿੱਤਰ ਅਪਲੋਡ ਕਰੋ',
+    startListening: 'ਸੁਣਨਾ ਸ਼ੁਰੂ ਕਰੋ',
+    stopListening: 'ਸੁਣਨਾ ਬੰਦ ਕਰੋ',
+    speechNotSupported: 'ਭਾਸ਼ਣ ਸਮਰਥਿਤ ਨਹੀਂ ਹੈ'
   },
   
   mr: {
+    // Common
+    title: 'कृषी सहाय्यक',
+    
     // Navigation
     dashboard: 'डॅशबोर्ड',
     marketPrices: 'बाजार भाव',
@@ -215,6 +293,10 @@ export const translations = {
     toDate: 'पर्यंत तारीख',
     loadData: 'डेटा लोड करा',
     noDataAvailable: 'कोणताही डेटा उपलब्ध नाही',
+    dataSummary: 'डेटा सारांश',
+    averagePrice: 'सरासरी भाव',
+    averageQuantity: 'सरासरी प्रमाण',
+    dataPoints: 'डेटा बिंदू',
     
     // Weather
     currentWeather: 'सध्याचे हवामान',
@@ -231,6 +313,16 @@ export const translations = {
     uvIndex: 'यूवी निर्देशांक',
     sunrise: 'सूर्योदय',
     sunset: 'सूर्यास्त',
+    soilTemperature: 'मातीचे तापमान',
+    soilMoisture: 'मातीची ओलसरता',
+    agricultureInsights: 'शेती अंतर्दृष्टी',
+    irrigation: 'सिंचन',
+    cropHealth: 'पीक आरोग्य',
+    pestRisk: 'कीड धोका',
+    harvestTiming: 'कापणीचा वेळ',
+    temperatureForecast: '24 तासांचा तापमान अंदाज',
+    precipitationForecast: '7 दिवसांचा पाऊस अंदाज',
+    sevenDayForecast: '7 दिवसांचा अंदाज',
     
     // Language
     language: 'भाषा',
@@ -247,10 +339,21 @@ export const translations = {
     assistantTitle: 'डॉ. पीक सहाय्यक',
     assistantDescription: 'पिके, कीटक, हवामान आणि अधिक बद्दल प्रश्न विचारा।',
     generatingResponse: 'प्रतिसाद तयार होत आहे…',
-    sorryError: 'माफ करा, सर्व्हरशी संपर्क साधताना काहीतरी चूक झाली।'
+    sorryError: 'माफ करा, सर्व्हरशी संपर्क साधताना काहीतरी चूक झाली।',
+    placeholder: 'मला काहीही विचारा...',
+    send: 'पाठवा',
+    image: 'प्रतिमा',
+    removeImage: 'प्रतिमा काढा',
+    uploadImage: 'प्रतिमा अपलोड करा',
+    startListening: 'ऐकणे सुरू करा',
+    stopListening: 'ऐकणे थांबवा',
+    speechNotSupported: 'भाषण समर्थित नाही'
   },
   
   te: {
+    // Common
+    title: 'వ్యవసాయ సహాయకుడు',
+    
     // Navigation
     dashboard: 'డాష్‌బోర్డ్',
     marketPrices: 'మార్కెట్ ధరలు',
@@ -275,6 +378,10 @@ export const translations = {
     toDate: 'వరకు తేదీ',
     loadData: 'డేటా లోడ్ చేయండి',
     noDataAvailable: 'డేటా అందుబాటులో లేదు',
+    dataSummary: 'డేటా సారాంశం',
+    averagePrice: 'సగటు ధర',
+    averageQuantity: 'సగటు పరిమాణం',
+    dataPoints: 'డేటా బిందువులు',
     
     // Weather
     currentWeather: 'ప్రస్తుత వాతావరణం',
@@ -291,6 +398,16 @@ export const translations = {
     uvIndex: 'యువి సూచిక',
     sunrise: 'సూర్యోదయం',
     sunset: 'సూర్యాస్తమయం',
+    soilTemperature: 'నేల ఉష్ణోగ్రత',
+    soilMoisture: 'నేల తేమ',
+    agricultureInsights: 'వ్యవసాయ అంతర్దృష్టి',
+    irrigation: 'నీటి తడుపుదల',
+    cropHealth: 'పంట ఆరోగ్యం',
+    pestRisk: 'కీటక ప్రమాదం',
+    harvestTiming: 'పంట కోత సమయం',
+    temperatureForecast: '24 గంటల ఉష్ణోగ్రత అంచనా',
+    precipitationForecast: '7 రోజుల వర్షపాతం అంచనా',
+    sevenDayForecast: '7 రోజుల అంచనా',
     
     // Language
     language: 'భాష',
@@ -307,10 +424,21 @@ export const translations = {
     assistantTitle: 'డా. పంట సహాయకుడు',
     assistantDescription: 'పంటలు, కీటకాలు, వాతావరణం మరియు మరిన్ని గురించి ప్రశ్నలు అడగండి.',
     generatingResponse: 'సమాధానం తయారవుతోంది…',
-    sorryError: 'క్షమించండి, సర్వర్‌తో సంప్రదించేటప్పుడు ఏదో తప్పు జరిగింది.'
+    sorryError: 'క్షమించండి, సర్వర్‌తో సంప్రదించేటప్పుడు ఏదో తప్పు జరిగింది.',
+    placeholder: 'నన్ను ఏదైనా అడగండి...',
+    send: 'పంపండి',
+    image: 'చిత్రం',
+    removeImage: 'చిత్రాన్ని తొలగించండి',
+    uploadImage: 'చిత్రాన్ని అప్‌లోడ్ చేయండి',
+    startListening: 'వినడం ప్రారంభించండి',
+    stopListening: 'వినడం ఆపండి',
+    speechNotSupported: 'మాట్లాడటం మద్దతు లేదు'
   },
   
   ta: {
+    // Common
+    title: 'விவசாய உதவியாளர்',
+    
     // Navigation
     dashboard: 'டாஷ்போர்டு',
     marketPrices: 'சந்தை விலைகள்',
@@ -335,6 +463,10 @@ export const translations = {
     toDate: 'வரை தேதி',
     loadData: 'தரவை ஏற்று',
     noDataAvailable: 'தரவு எதுவும் இல்லை',
+    dataSummary: 'தரவு சுருக்கம்',
+    averagePrice: 'சராசரி விலை',
+    averageQuantity: 'சராசரி அளவு',
+    dataPoints: 'தரவு புள்ளிகள்',
     
     // Weather
     currentWeather: 'தற்போதைய வானிலை',
@@ -351,6 +483,16 @@ export const translations = {
     uvIndex: 'யூவி குறியீடு',
     sunrise: 'சூரிய உதயம்',
     sunset: 'சூரிய அஸ்தமனம்',
+    soilTemperature: 'மண் வெப்பநிலை',
+    soilMoisture: 'மண் ஈரப்பதம்',
+    agricultureInsights: 'விவசாய நுண்ணறிவு',
+    irrigation: 'நீர்ப்பாசனம்',
+    cropHealth: 'பயிர் ஆரோக்கியம்',
+    pestRisk: 'பூச்சி ஆபத்து',
+    harvestTiming: 'அறுவடை நேரம்',
+    temperatureForecast: '24 மணி நேர வெப்பநிலை முன்கணிப்பு',
+    precipitationForecast: '7 நாள் மழைப்பொழிவு முன்கணிப்பு',
+    sevenDayForecast: '7 நாள் முன்கணிப்பு',
     
     // Language
     language: 'மொழி',
@@ -367,7 +509,15 @@ export const translations = {
     assistantTitle: 'டா. பயிர் உதவியாளர்',
     assistantDescription: 'பயிர்கள், பூச்சிகள், வானிலை மற்றும் பலவற்றைப் பற்றி கேள்விகள் கேள்வி.',
     generatingResponse: 'பதில் தயாராகிறது…',
-    sorryError: 'மன்னிக்கவும், சர்வரை தொடர்பு கொள்ளும்போது ஏதோ தவறு நடந்தது.'
+    sorryError: 'மன்னிக்கவும், சர்வரை தொடர்பு கொள்ளும்போது ஏதோ தவறு நடந்தது.',
+    placeholder: 'என்னை எதையும் கேள்வி...',
+    send: 'அனுப்பு',
+    image: 'படம்',
+    removeImage: 'படத்தை நீக்கு',
+    uploadImage: 'படத்தை பதிவேற்று',
+    startListening: 'கேட்பதைத் தொடங்கு',
+    stopListening: 'கேட்பதை நிறுத்து',
+    speechNotSupported: 'பேச்சு ஆதரிக்கப்படவில்லை'
   }
 };
 

@@ -148,7 +148,7 @@ export default function WeatherForecast() {
     return (
       <div className="bg-white rounded-lg border p-6">
         <div className="text-center">
-          <div className="text-gray-600 mb-4">No weather data available</div>
+          <div className="text-gray-600 mb-4">{t('noDataAvailable')}</div>
           <button
             onClick={loadWeatherData}
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
@@ -220,13 +220,13 @@ export default function WeatherForecast() {
         {/* Agriculture-specific data */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
           <div className="p-3 bg-orange-50 rounded">
-            <div className="text-sm text-gray-600">Soil Temperature</div>
+            <div className="text-sm text-gray-600">{t('soilTemperature')}</div>
             <div className="font-semibold text-orange-600">
               {Math.round(weatherData.current.soil_temperature_0cm)}°C
             </div>
           </div>
           <div className="p-3 bg-brown-50 rounded">
-            <div className="text-sm text-gray-600">Soil Moisture</div>
+            <div className="text-sm text-gray-600">{t('soilMoisture')}</div>
             <div className="font-semibold text-brown-600">
               {Math.round(weatherData.current.soil_moisture_0_1cm * 100)}%
             </div>
@@ -237,24 +237,24 @@ export default function WeatherForecast() {
       {/* Agriculture Insights */}
       {agricultureInsights && (
         <div className="bg-white rounded-lg border p-6">
-          <h3 className="text-lg font-semibold mb-4">Agriculture Insights</h3>
+          <h3 className="text-lg font-semibold mb-4">{t('agricultureInsights')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <div className="font-semibold text-blue-800 mb-2">Irrigation</div>
-              <div className="text-sm text-blue-700">{agricultureInsights.irrigation}</div>
-            </div>
-            <div className="p-4 bg-green-50 rounded-lg">
-              <div className="font-semibold text-green-800 mb-2">Crop Health</div>
-              <div className="text-sm text-green-700">{agricultureInsights.cropHealth}</div>
-            </div>
-            <div className="p-4 bg-yellow-50 rounded-lg">
-              <div className="font-semibold text-yellow-800 mb-2">Pest Risk</div>
-              <div className="text-sm text-yellow-700">{agricultureInsights.pestRisk}</div>
-            </div>
-            <div className="p-4 bg-purple-50 rounded-lg">
-              <div className="font-semibold text-purple-800 mb-2">Harvest Timing</div>
-              <div className="text-sm text-purple-700">{agricultureInsights.harvestTiming}</div>
-            </div>
+                          <div className="p-4 bg-blue-50 rounded-lg">
+                <div className="font-semibold text-blue-800 mb-2">{t('irrigation')}</div>
+                <div className="text-sm text-blue-700">{agricultureInsights.irrigation}</div>
+              </div>
+              <div className="p-4 bg-green-50 rounded-lg">
+                <div className="font-semibold text-green-800 mb-2">{t('cropHealth')}</div>
+                <div className="text-sm text-green-700">{agricultureInsights.cropHealth}</div>
+              </div>
+              <div className="p-4 bg-yellow-50 rounded-lg">
+                <div className="font-semibold text-yellow-800 mb-2">{t('pestRisk')}</div>
+                <div className="text-sm text-yellow-700">{agricultureInsights.pestRisk}</div>
+              </div>
+              <div className="p-4 bg-purple-50 rounded-lg">
+                <div className="font-semibold text-purple-800 mb-2">{t('harvestTiming')}</div>
+                <div className="text-sm text-purple-700">{agricultureInsights.harvestTiming}</div>
+              </div>
           </div>
         </div>
       )}
@@ -262,7 +262,7 @@ export default function WeatherForecast() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg border p-6">
-          <h3 className="text-lg font-semibold mb-4">24-Hour Temperature Forecast</h3>
+          <h3 className="text-lg font-semibold mb-4">{t('temperatureForecast')}</h3>
           {temperatureChartData && (
             <Line 
               data={temperatureChartData} 
@@ -289,7 +289,7 @@ export default function WeatherForecast() {
         </div>
 
         <div className="bg-white rounded-lg border p-6">
-          <h3 className="text-lg font-semibold mb-4">7-Day Precipitation Forecast</h3>
+          <h3 className="text-lg font-semibold mb-4">{t('precipitationForecast')}</h3>
           {precipitationChartData && (
             <Bar 
               data={precipitationChartData} 
@@ -319,7 +319,7 @@ export default function WeatherForecast() {
 
       {/* Daily Forecast */}
       <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-lg font-semibold mb-4">7-Day Forecast</h3>
+                  <h3 className="text-lg font-semibold mb-4">{t('sevenDayForecast')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
           {weatherData.daily.time.map((date, index) => (
             <div key={date} className="text-center p-3 bg-gray-50 rounded">

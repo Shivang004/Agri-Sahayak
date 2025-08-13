@@ -29,7 +29,7 @@ export default function Page() {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-green-600">Agri Sahayak</h1>
+            <h1 className="text-2xl font-bold text-green-600">{t('title')}</h1>
             <LanguageSelector />
           </div>
         </div>
