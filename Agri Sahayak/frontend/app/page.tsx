@@ -49,7 +49,7 @@ export default function Page() {
             <div className="flex items-center gap-3">
               {/* Image Logo */}
               <img 
-                src="https://cdn.corenexis.com/file/?serve=9881839168.png&token=c29a1f5a7fe82a2a806322536c4a328573bb421bdab33aac9e70b5da49515069.OTg4MTgzOTE2OC5wbmd8MTc1NTEyMjQ1NA==" 
+                src="/logo.png" 
                 alt="Agri Sahayak Logo" 
                 className="h-12 w-12"
               />
