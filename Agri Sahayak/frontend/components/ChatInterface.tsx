@@ -65,8 +65,22 @@ export default function ChatInterface() {
         <p className="text-xs text-gray-500">{t('assistantDescription')}</p>
       </div>
 
-      {/* MessageList grows to fill available space and becomes scrollable */}
-      <MessageList messages={messages} />
+      {/* START: Replace the old MessageList component with this block */}
+      <div className="flex-1 overflow-y-auto p-4">
+        {messages.length === 0 ? (
+          // If there are no messages, show the welcome message
+          <div className="flex h-full items-center justify-center">
+            <div className="text-center">
+              <img src="/logo.png" alt="Logo" className="w-24 h-24 mx-auto mb-4" />
+              <p className="text-lg text-gray-500">{t('welcomeMessage')}</p>
+            </div>
+          </div>
+        ) : (
+          // Otherwise, show the list of messages
+          <MessageList messages={messages} />
+        )}
+      </div>
+      {/* END: Replacement block */}
 
       {/* The input form remains fixed at the bottom */}
       {isLoading && (

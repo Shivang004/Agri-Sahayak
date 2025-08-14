@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { LanguageProvider } from '@/lib/LanguageContext';
+import { AuthProvider } from '@/lib/AuthContext'; // Import AuthProvider
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,11 +18,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full bg-gray-50">
-      {/* Add flex and flex-col to make the body a full-height flex container */}
       <body className={`${inter.className} h-full flex flex-col`}>
-        <LanguageProvider>
-          {children}
-        </LanguageProvider>
+        <AuthProvider> {/* Wrap with AuthProvider */}
+          <LanguageProvider>
+            {children}
+          </LanguageProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -7,10 +7,24 @@ import FertilizerTool from '@/components/FertilizerTool';
 import MarketData from '@/components/MarketData';
 import WeatherForecast from '@/components/WeatherForecast';
 import LanguageSelector from '@/components/LanguageSelector';
+import { useAuth } from '@/lib/AuthContext';
+import Login from '@/components/Login';
+import Signup from '@/components/Signup';
+
+type AuthView = 'login' | 'signup';
 
 export default function Page() {
   const { t } = useLanguage();
+  const { isAuthenticated, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<'chat' | 'market' | 'weather' | 'fertilizer'>('chat');
+  const [authView, setAuthView] = useState<AuthView>('login');
+
+  if (!isAuthenticated) {
+    if (authView === 'signup') {
+      return <Signup onSwitchToLogin={() => setAuthView('login')} />;
+    }
+    return <Login onSwitchToSignup={() => setAuthView('signup')} />;
+  }
 
   const renderMainContent = () => {
     switch (activeTab) {
@@ -21,21 +35,15 @@ export default function Page() {
       case 'fertilizer':
         // This view is for mobile when the fertilizer tab is selected
         return <FertilizerTool />;
-      case 'chat':
-      default:
-        return (
-          <div className="flex h-full gap-6">
-            <div className="flex w-full flex-col md:w-2/3">
-              <ChatInterface />
-            </div>
-            {/* Sidebar for desktop view */}
-            <div className="hidden w-1/3 overflow-y-auto md:block">
-              <aside className="flex flex-col space-y-6">
-                <FertilizerTool />
-              </aside>
-            </div>
-          </div>
-        );
+        case 'chat':
+          default:
+            return (
+              <div className="flex h-full"> {/* <-- Simplified container */}
+                <div className="flex w-full flex-col"> {/* <-- Takes full width now */}
+                  <ChatInterface />
+                </div>
+              </div>
+            );
     }
   };
 
@@ -54,8 +62,18 @@ export default function Page() {
                 className="h-12 w-12"
               />
               <h1 className="text-2xl font-bold text-green-600">{t('title')}</h1>
+              </div>
+            {/* START: ADD THIS SECTION */}
+            <div className="flex items-center gap-4">
+              <LanguageSelector />
+              <button
+                onClick={logout}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+              >
+                {t('logout')}
+              </button>
             </div>
-            <LanguageSelector />
+            {/* END: ADD THIS SECTION */}
           </div>
         </div>
       </header>
@@ -97,7 +115,7 @@ export default function Page() {
             {/* Fertilizer Tool tab - visible only on mobile */}
             <button
               onClick={() => setActiveTab('fertilizer')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm md:hidden ${
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
                 activeTab === 'fertilizer'
                   ? 'border-green-500 text-green-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
