@@ -1,15 +1,13 @@
-// File: app/api/auth/signup/route.ts
-
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/database'; // Import our new database function
 import bcrypt from 'bcrypt';
 
 export async function POST(req: NextRequest) {
   try {
-    const { username, password } = await req.json();
+    const { username, password, state, district } = await req.json();
 
-    if (!username || !password) {
-      return NextResponse.json({ message: 'Username and password are required.' }, { status: 400 });
+    if (!username || !password || !state || !district) {
+      return NextResponse.json({ message: 'Username, password, state, and district are required.' }, { status: 400 });
     }
 
     // Get the database connection
@@ -27,7 +25,7 @@ export async function POST(req: NextRequest) {
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     // Insert the new user into the database
-    await db.run('INSERT INTO users (username, passwordHash) VALUES (?, ?)', username, passwordHash);
+    await db.run('INSERT INTO users (username, passwordHash, state, district) VALUES (?, ?, ?, ?)', username, passwordHash, state, district);
 
     return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
 

@@ -1,33 +1,54 @@
+//
+// File: shivang004/agri-sahayak/Agri-Sahayak-556aba1d3e32dffff51a3e6061f2534765bf648e/Agri Sahayak/frontend/lib/AuthContext.tsx
+//
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  user: { username: string, state: string, district: string } | null;
   login: (user: string, pass: string) => Promise<boolean>;
   logout: () => void;
-  signup: (user: string, pass: string) => Promise<boolean>;
+  signup: (user: string, pass: string, state: string, district: string) => Promise<boolean>;
+  updateUser: (userData: { username: string, password?: string, state: string, district: string }) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<{ username: string, state: string, district: string } | null>(null);
+
+  const fetchUserData = async (username: string) => {
+    try {
+      const response = await fetch(`/api/auth/user?username=${encodeURIComponent(username)}`);
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+      } else {
+        logout();
+      }
+    } catch (error) {
+      console.error('Failed to fetch user data', error);
+      logout();
+    }
+  };
 
   useEffect(() => {
-    // Check if a session is stored in the browser
-    const authStatus = localStorage.getItem('agri-sahayak-auth');
-    if (authStatus) {
+    const username = localStorage.getItem('agri-sahayak-auth');
+    if (username) {
       setIsAuthenticated(true);
+      fetchUserData(username);
     }
   }, []);
 
-  const signup = async (username: string, pass: string): Promise<boolean> => {
+  const signup = async (username: string, pass: string, state: string, district: string): Promise<boolean> => {
     try {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password: pass }),
+        body: JSON.stringify({ username, password: pass, state, district }),
       });
 
       if (!response.ok) {
@@ -52,9 +73,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (response.ok) {
-        // Store session state in the browser to stay logged in
-        localStorage.setItem('agri-sahayak-auth', username); 
+        localStorage.setItem('agri-sahayak-auth', username);
         setIsAuthenticated(true);
+        await fetchUserData(username);
         return true;
       } else {
         const data = await response.json();
@@ -71,17 +92,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     localStorage.removeItem('agri-sahayak-auth');
     setIsAuthenticated(false);
+    setUser(null);
+  };
+
+  const updateUser = async (userData: { username: string, password?: string, state: string, district: string }): Promise<boolean> => {
+    try {
+      const response = await fetch('/api/auth/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        alert(`Update failed: ${data.message}`);
+        return false;
+      }
+
+      setUser({ username: userData.username, state: userData.state, district: userData.district });
+      return true;
+    } catch (error) {
+      console.error('Update fetch error:', error);
+      alert('An error occurred during update.');
+      return false;
+    }
   };
 
   const contextValue: AuthContextType = {
     isAuthenticated,
+    user,
     login,
     logout,
-    signup
+    signup,
+    updateUser,
   };
 
   return (
-    // UPDATE the prop to use the new constant name
     <AuthContext.Provider value={contextValue}>
     {children}
     </AuthContext.Provider>
