@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useLanguage } from '@/lib/LanguageContext';
+import { useDataCache } from '@/lib/DataCacheContext';
 import ChatInterface from '@/components/ChatInterface';
 import FertilizerTool from '@/components/FertilizerTool';
 import MarketData from '@/components/MarketData';
@@ -17,6 +18,7 @@ type AuthView = 'login' | 'signup';
 export default function Page() {
   const { t } = useLanguage();
   const { isAuthenticated, logout } = useAuth();
+  const { clearAllCache } = useDataCache();
   const [activeTab, setActiveTab] = useState<'chat' | 'market' | 'weather' | 'fertilizer'>('chat');
   const [authView, setAuthView] = useState<AuthView>('login');
 
@@ -34,23 +36,21 @@ export default function Page() {
       case 'weather':
         return <WeatherForecast />;
       case 'fertilizer':
-        // This view is for mobile when the fertilizer tab is selected
         return <FertilizerTool />;
-        case 'chat':
-          default:
-            return (
-              <div className="flex h-full"> {/* <-- Simplified container */}
-                <div className="flex w-full flex-col"> {/* <-- Takes full width now */}
-                  <ChatInterface />
-                </div>
-              </div>
-            );
+      case 'chat':
+      default:
+        return (
+          <div className="flex h-full">
+            <div className="flex w-full flex-col">
+              <ChatInterface />
+            </div>
+          </div>
+        );
     }
   };
 
   return (
     <main className="flex h-screen flex-col bg-gray-50">
-      
       {/* Header */}
       <header className="flex-shrink-0 border-b bg-white shadow-sm">
         <div className="mx-auto max-w-7xl px-4 py-4">
@@ -63,23 +63,24 @@ export default function Page() {
                 className="h-12 w-12"
               />
               <h1 className="text-2xl font-bold text-green-600">{t('title')}</h1>
-              </div>
-            {/* START: ADD THIS SECTION */}
+            </div>
             <div className="flex items-center gap-4">
               <LanguageSelector />
               <Link href="/profile" className="p-2 rounded-full hover:bg-gray-100">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-gray-500">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-gray-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
               </Link>
               <button
-                onClick={logout}
+                onClick={() => {
+                  clearAllCache();
+                  logout();
+                }}
                 className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
               >
-                {t('logout')}
+                Logout
               </button>
             </div>
-            {/* END: ADD THIS SECTION */}
           </div>
         </div>
       </header>
@@ -118,7 +119,6 @@ export default function Page() {
             >
               {t('weatherForecast')}
             </button>
-            {/* Fertilizer Tool tab - visible only on mobile */}
             <button
               onClick={() => setActiveTab('fertilizer')}
               className={`py-4 px-1 border-b-2 font-medium text-sm ${

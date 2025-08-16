@@ -1,32 +1,34 @@
 export interface Commodity {
-  id: string;
-  name: string;
-  nameHindi?: string;
-  namePunjabi?: string;
-  nameMarathi?: string;
-  nameTelugu?: string;
-  nameTamil?: string;
+  commodity_id: number;
+  commodity_name: string;
 }
 
-export interface Geography {
-  id: string;
-  name: string;
-  type: 'state' | 'district';
-  parentId?: string;
+export interface State {
+  state_id: number;
+  state_name: string;
 }
 
-export interface MarketDataPoint {
+export interface District {
+  district_id: number;
+  district_name: string;
+}
+
+export interface PriceData {
   date: string;
-  price: number;
+  min_price: number;
+  max_price: number;
+  modal_price: number;
+}
+
+export interface QuantityData {
+  date: string;
   quantity: number;
-  commodity: string;
-  state?: string;
-  district?: string;
 }
 
 export interface MarketDataResponse {
-  data: MarketDataPoint[];
-  commodity: string;
+  prices?: PriceData[];
+  quantities?: QuantityData[];
+  commodity?: string;
   state?: string;
   district?: string;
   dateRange: {
@@ -35,113 +37,139 @@ export interface MarketDataResponse {
   };
 }
 
-// Mock data for development - replace with actual API calls
+const API_BASE = 'http://localhost:8000/api/data';
+
+// Fetch commodities from backend
 export async function fetchCommodities(): Promise<Commodity[]> {
-  // TODO: Replace with actual API call to /api/commodities
-  return [
-    { id: 'wheat', name: 'Wheat', nameHindi: 'गेहूं', namePunjabi: 'ਕਣਕ', nameMarathi: 'गहू', nameTelugu: 'గోధుమ', nameTamil: 'கோதுமை' },
-    { id: 'rice', name: 'Rice', nameHindi: 'चावल', namePunjabi: 'ਚਾਵਲ', nameMarathi: 'भात', nameTelugu: 'బియ్యం', nameTamil: 'அரிசி' },
-    { id: 'maize', name: 'Maize', nameHindi: 'मक्का', namePunjabi: 'ਮੱਕੀ', nameMarathi: 'मका', nameTelugu: 'మొక్కజొన్న', nameTamil: 'சோளம்' },
-    { id: 'pulses', name: 'Pulses', nameHindi: 'दालें', namePunjabi: 'ਦਾਲਾਂ', nameMarathi: 'डाळी', nameTelugu: 'పప్పులు', nameTamil: 'பருப்பு' },
-    { id: 'soybean', name: 'Soybean', nameHindi: 'सोयाबीन', namePunjabi: 'ਸੋਇਆਬੀਨ', nameMarathi: 'सोयाबीन', nameTelugu: 'సోయాబీన్', nameTamil: 'சோயாபீன்' },
-    { id: 'cotton', name: 'Cotton', nameHindi: 'कपास', namePunjabi: 'ਕਪਾਹ', nameMarathi: 'कापूस', nameTelugu: 'పత్తి', nameTamil: 'பருத்தி' },
-    { id: 'sugarcane', name: 'Sugarcane', nameHindi: 'गन्ना', namePunjabi: 'ਗੰਨਾ', nameMarathi: 'ऊस', nameTelugu: 'చెరకు', nameTamil: 'கரும்பு' }
-  ];
+  try {
+    const response = await fetch(`${API_BASE}/commodities`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.commodities || [];
+  } catch (error) {
+    console.error('Error fetching commodities:', error);
+    return [];
+  }
 }
 
-export async function fetchGeographies(): Promise<Geography[]> {
-  // TODO: Replace with actual API call to /api/geographies
-  return [
-    { id: 'mh', name: 'Maharashtra', type: 'state' },
-    { id: 'mh-mumbai', name: 'Mumbai', type: 'district', parentId: 'mh' },
-    { id: 'mh-pune', name: 'Pune', type: 'district', parentId: 'mh' },
-    { id: 'mh-nagpur', name: 'Nagpur', type: 'district', parentId: 'mh' },
-    { id: 'up', name: 'Uttar Pradesh', type: 'state' },
-    { id: 'up-lucknow', name: 'Lucknow', type: 'district', parentId: 'up' },
-    { id: 'up-kanpur', name: 'Kanpur', type: 'district', parentId: 'up' },
-    { id: 'pb', name: 'Punjab', type: 'state' },
-    { id: 'pb-amritsar', name: 'Amritsar', type: 'district', parentId: 'pb' },
-    { id: 'pb-ludhiana', name: 'Ludhiana', type: 'district', parentId: 'pb' },
-    { id: 'ap', name: 'Andhra Pradesh', type: 'state' },
-    { id: 'ap-hyderabad', name: 'Hyderabad', type: 'district', parentId: 'ap' },
-    { id: 'tn', name: 'Tamil Nadu', type: 'state' },
-    { id: 'tn-chennai', name: 'Chennai', type: 'district', parentId: 'tn' },
-    { id: 'tn-coimbatore', name: 'Coimbatore', type: 'district', parentId: 'tn' }
-  ];
+// Fetch states from backend
+export async function fetchStates(): Promise<State[]> {
+  try {
+    const response = await fetch(`${API_BASE}/states`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.states || [];
+  } catch (error) {
+    console.error('Error fetching states:', error);
+    return [];
+  }
 }
 
+// Fetch districts for a specific state
+export async function fetchDistricts(stateId: number): Promise<District[]> {
+  try {
+    const response = await fetch(`${API_BASE}/districts/${stateId}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.districts || [];
+  } catch (error) {
+    console.error('Error fetching districts:', error);
+    return [];
+  }
+}
+
+// Fetch prices from backend
 export async function fetchPrices(params: {
-  commodity: string;
-  state?: string;
-  district?: string;
-  fromDate: string;
-  toDate: string;
-}): Promise<MarketDataResponse> {
-  // TODO: Replace with actual API call to /api/prices
-  const { commodity, state, district, fromDate, toDate } = params;
-  
-  // Generate mock data
-  const data: MarketDataPoint[] = [];
-  const startDate = new Date(fromDate);
-  const endDate = new Date(toDate);
-  
-  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-    const basePrice = Math.random() * 50 + 20; // Random price between 20-70
-    const variation = Math.sin(d.getTime() / (1000 * 60 * 60 * 24)) * 5; // Daily variation
-    
-    data.push({
-      date: d.toISOString().split('T')[0],
-      price: Math.round((basePrice + variation) * 100) / 100,
-      quantity: Math.floor(Math.random() * 1000) + 100,
-      commodity,
-      state,
-      district
+  commodity_id: number;
+  state_id: number;
+  district_id: number[];
+  from_date: string;
+  to_date: string;
+}): Promise<PriceData[]> {
+  try {
+    const response = await fetch(`${API_BASE}/prices`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(params),
     });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.prices || [];
+  } catch (error) {
+    console.error('Error fetching prices:', error);
+    return [];
   }
-  
-  return {
-    data,
-    commodity,
-    state,
-    district,
-    dateRange: { from: fromDate, to: toDate }
-  };
 }
 
+// Fetch quantities from backend
 export async function fetchQuantities(params: {
-  commodity: string;
-  state?: string;
-  district?: string;
-  fromDate: string;
-  toDate: string;
-}): Promise<MarketDataResponse> {
-  // TODO: Replace with actual API call to /api/quantity
-  const { commodity, state, district, fromDate, toDate } = params;
-  
-  // Generate mock data
-  const data: MarketDataPoint[] = [];
-  const startDate = new Date(fromDate);
-  const endDate = new Date(toDate);
-  
-  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-    const baseQuantity = Math.random() * 500 + 200; // Random quantity between 200-700
-    const variation = Math.cos(d.getTime() / (1000 * 60 * 60 * 24)) * 50; // Daily variation
-    
-    data.push({
-      date: d.toISOString().split('T')[0],
-      price: Math.round((Math.random() * 50 + 20) * 100) / 100,
-      quantity: Math.floor(baseQuantity + variation),
-      commodity,
-      state,
-      district
+  commodity_id: number;
+  state_id: number;
+  district_id: number[];
+  from_date: string;
+  to_date: string;
+}): Promise<QuantityData[]> {
+  try {
+    const response = await fetch(`${API_BASE}/quantities`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(params),
     });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.quantities || [];
+  } catch (error) {
+    console.error('Error fetching quantities:', error);
+    return [];
   }
+}
+
+// Helper function to aggregate data by date
+export function aggregateDataByDate<T extends { date: string }>(data: T[], key: keyof T): { date: string; value: number }[] {
+  const aggregated = new Map<string, number[]>();
   
-  return {
-    data,
-    commodity,
-    state,
-    district,
-    dateRange: { from: fromDate, to: toDate }
-  };
+  data.forEach(item => {
+    const date = item.date;
+    const value = Number(item[key]);
+    if (!isNaN(value)) {
+      if (!aggregated.has(date)) {
+        aggregated.set(date, []);
+      }
+      aggregated.get(date)!.push(value);
+    }
+  });
+  
+  return Array.from(aggregated.entries()).map(([date, values]) => ({
+    date,
+    value: values.reduce((sum, val) => sum + val, 0) / values.length // Average for the day
+  })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+}
+
+// Helper function to get latest data point
+export function getLatestDataPoint<T extends { date: string }>(data: T[]): T | null {
+  if (data.length === 0) return null;
+  
+  return data.reduce((latest, current) => {
+    const latestDate = new Date(latest.date);
+    const currentDate = new Date(current.date);
+    return currentDate > latestDate ? current : latest;
+  });
 }

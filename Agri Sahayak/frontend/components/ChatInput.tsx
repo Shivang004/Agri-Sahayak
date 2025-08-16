@@ -21,6 +21,13 @@ export default function ChatInput({
     }
   }, [transcript]);
 
+  function clearImage() {
+    setImageUrl(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const trimmed = text.trim();
@@ -33,6 +40,7 @@ export default function ChatInput({
     
     onSend({ text: trimmed, imageUrl });
     setText('');
+    clearImage(); // Clear the image and reset file input after sending
     clearTranscript(); // Clear speech transcript after sending
   }
 
@@ -119,7 +127,7 @@ export default function ChatInput({
       {imageUrl && (
         <div className="mt-2 flex items-center gap-3">
           <img src={imageUrl} alt="Selected" className="h-12 w-12 rounded object-cover" />
-          <button type="button" className="text-xs text-red-600 hover:underline" onClick={() => setImageUrl(null)}>
+          <button type="button" className="text-xs text-red-600 hover:underline" onClick={clearImage}>
             {t('removeImage')}
           </button>
         </div>

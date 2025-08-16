@@ -4,10 +4,10 @@ import bcrypt from 'bcrypt';
 
 export async function POST(req: NextRequest) {
   try {
-    const { username, password, state, district } = await req.json();
+    const { username, password, state_id, district_id } = await req.json();
 
-    if (!username || !password || !state || !district) {
-      return NextResponse.json({ message: 'Username, password, state, and district are required.' }, { status: 400 });
+    if (!username || !password || state_id === undefined || district_id === undefined) {
+      return NextResponse.json({ message: 'Username, password, state_id, and district_id are required.' }, { status: 400 });
     }
 
     // Get the database connection
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     // Insert the new user into the database
-    await db.run('INSERT INTO users (username, passwordHash, state, district) VALUES (?, ?, ?, ?)', username, passwordHash, state, district);
+    await db.run('INSERT INTO users (username, passwordHash, state_id, district_id) VALUES (?, ?, ?, ?)', username, passwordHash, state_id, district_id);
 
     return NextResponse.json({ message: 'User created successfully' }, { status: 201 });
 

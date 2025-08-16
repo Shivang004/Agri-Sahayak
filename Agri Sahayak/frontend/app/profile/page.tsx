@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import { useLanguage } from '@/lib/LanguageContext';
+import { fetchStates, fetchDistricts, type State, type District } from '@/lib/marketApi';
 import Link from 'next/link';
 
 export default function ProfilePage() {
@@ -10,26 +11,79 @@ export default function ProfilePage() {
   const { t } = useLanguage();
   const [username, setUsername] = useState(user?.username || '');
   const [password, setPassword] = useState('');
-  const [state, setState] = useState(user?.state || '');
-  const [district, setDistrict] = useState(user?.district || '');
+  const [states, setStates] = useState<State[]>([]);
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [selectedState, setSelectedState] = useState<number | null>(user?.state_id || null);
+  const [selectedDistrict, setSelectedDistrict] = useState<number | null>(user?.district_id || null);
   const [showPassword, setShowPassword] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
   const [isEditingLocation, setIsEditingLocation] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      setUsername(user.username);
-      setState(user.state || '');
-      setDistrict(user.district || '');
+    loadStates();
+  }, []);
+
+  useEffect(() => {
+    if (selectedState) {
+      loadDistricts(selectedState);
+    } else {
+      setDistricts([]);
+      setSelectedDistrict(null);
     }
-  }, [user]);
+  }, [selectedState]);
+
+  const loadStates = async () => {
+    try {
+      const statesData = await fetchStates();
+      setStates(statesData);
+    } catch (error) {
+      console.error('Failed to load states:', error);
+    }
+  };
+
+  const loadDistricts = async (stateId: number) => {
+    try {
+      const districtsData = await fetchDistricts(stateId);
+      setDistricts(districtsData);
+      if (districtsData.length > 0 && !selectedDistrict) {
+        setSelectedDistrict(districtsData[0].district_id);
+      }
+    } catch (error) {
+      console.error('Failed to load districts:', error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateUser({ username, password, state, district });
+    if (isEditingLocation && (!selectedState || !selectedDistrict)) {
+      alert('Please select both state and district');
+      return;
+    }
+    
+    const updateData: any = { username };
+    if (password) {
+      updateData.password = password;
+    }
+    if (isEditingLocation && selectedState && selectedDistrict) {
+      updateData.state_id = selectedState;
+      updateData.district_id = selectedDistrict;
+    }
+    
+    await updateUser(updateData);
     alert('Profile updated successfully!');
     setIsEditingPassword(false);
     setIsEditingLocation(false);
+    setPassword('');
+  };
+
+  const getStateName = (stateId: number) => {
+    const state = states.find(s => s.state_id === stateId);
+    return state?.state_name || 'Unknown';
+  };
+
+  const getDistrictName = (districtId: number) => {
+    const district = districts.find(d => d.district_id === districtId);
+    return district?.district_name || 'Unknown';
   };
 
   if (!user) {
@@ -95,6 +149,10 @@ export default function ProfilePage() {
           </div>
 
           <div>
+            <label className="text-sm font-medium text-gray-700">{t('Current Location')}</label>
+            <p className="mt-1 text-lg">
+              {getStateName(user.state_id)}, {getDistrictName(user.district_id)}
+            </p>
             <button
               onClick={() => setIsEditingLocation(!isEditingLocation)}
               className="text-sm font-medium text-green-600 hover:underline"
@@ -107,29 +165,42 @@ export default function ProfilePage() {
                   <label htmlFor="state" className="text-sm font-medium text-gray-700">
                     State
                   </label>
-                  <input
+                  <select
                     id="state"
                     name="state"
-                    type="text"
                     required
                     className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                  />
+                    value={selectedState || ''}
+                    onChange={(e) => setSelectedState(Number(e.target.value) || null)}
+                  >
+                    <option value="">Select State</option>
+                    {states.map(state => (
+                      <option key={state.state_id} value={state.state_id}>
+                        {state.state_name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label htmlFor="district" className="text-sm font-medium text-gray-700">
                     District
                   </label>
-                  <input
+                  <select
                     id="district"
                     name="district"
-                    type="text"
                     required
                     className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
-                    value={district}
-                    onChange={(e) => setDistrict(e.target.value)}
-                  />
+                    value={selectedDistrict || ''}
+                    onChange={(e) => setSelectedDistrict(Number(e.target.value) || null)}
+                    disabled={!selectedState}
+                  >
+                    <option value="">Select District</option>
+                    {districts.map(district => (
+                      <option key={district.district_id} value={district.district_id}>
+                        {district.district_name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             )}

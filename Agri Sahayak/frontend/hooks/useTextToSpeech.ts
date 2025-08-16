@@ -311,7 +311,11 @@ async function downloadCambAudio(runId: number): Promise<string> {
 
 export function useTextToSpeech() {
   const [isSupported, setIsSupported] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const synthRef = useRef<SpeechSynthesis | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   useEffect(() => {
     console.log('=== INITIALIZING TEXT-TO-SPEECH HOOK ===');
@@ -328,10 +332,82 @@ export function useTextToSpeech() {
     console.log('=== END INITIALIZING TEXT-TO-SPEECH HOOK ===');
   }, []);
 
+  const stop = useCallback(() => {
+    console.log('=== STOP FUNCTION CALLED ===');
+    
+    // Stop native speech synthesis
+    if (synthRef.current) {
+      synthRef.current.cancel();
+      console.log('Native speech synthesis stopped');
+    }
+    
+    // Stop audio playback
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      console.log('Audio playback stopped');
+    }
+    
+    // Reset state
+    setIsPlaying(false);
+    setIsPaused(false);
+    console.log('=== END STOP FUNCTION ===');
+  }, []);
+
+  const pause = useCallback(() => {
+    console.log('=== PAUSE FUNCTION CALLED ===');
+    
+    // Pause native speech synthesis
+    if (synthRef.current && synthRef.current.speaking) {
+      synthRef.current.pause();
+      setIsPaused(true);
+      console.log('Native speech synthesis paused');
+    }
+    
+    // Pause audio playback
+    if (audioRef.current && !audioRef.current.paused) {
+      audioRef.current.pause();
+      setIsPaused(true);
+      console.log('Audio playback paused');
+    }
+    
+    console.log('=== END PAUSE FUNCTION ===');
+  }, []);
+
+  const resume = useCallback(() => {
+    console.log('=== RESUME FUNCTION CALLED ===');
+    
+    // Resume native speech synthesis
+    if (synthRef.current && synthRef.current.paused) {
+      synthRef.current.resume();
+      setIsPaused(false);
+      console.log('Native speech synthesis resumed');
+    }
+    
+    // Resume audio playback
+    if (audioRef.current && audioRef.current.paused) {
+      audioRef.current.play();
+      setIsPaused(false);
+      console.log('Audio playback resumed');
+    }
+    
+    console.log('=== END RESUME FUNCTION ===');
+  }, []);
+
   const speak = useCallback(async (text: string, lang?: string) => {
     console.log('=== SPEAK FUNCTION CALLED ===');
     console.log('Text:', text);
     console.log('Provided language:', lang);
+    
+    // Stop any current playback first
+    stop();
+    
+    // Check if text is valid
+    if (!text || typeof text !== 'string' || text.trim().length === 0) {
+      console.warn('Invalid or empty text provided to speak function:', text);
+      return;
+    }
+    
     console.log('Text length:', text.length);
 
     // If no language provided, detect it automatically
@@ -350,6 +426,9 @@ export function useTextToSpeech() {
         utterance.pitch = 1;
         utterance.volume = 1;
 
+        // Store reference to utterance for control
+        utteranceRef.current = utterance;
+
         console.log('Utterance created:', {
           text: utterance.text,
           lang: utterance.lang,
@@ -358,18 +437,37 @@ export function useTextToSpeech() {
           volume: utterance.volume
         });
 
-        // Add event listeners for debugging
-        utterance.onstart = () => console.log('Speech started');
-        utterance.onend = () => console.log('Speech ended');
-        utterance.onerror = (event) => console.error('Speech error:', event);
-        utterance.onpause = () => console.log('Speech paused');
-        utterance.onresume = () => console.log('Speech resumed');
+        // Add event listeners for debugging and state management
+        utterance.onstart = () => {
+          console.log('Speech started');
+          setIsPlaying(true);
+          setIsPaused(false);
+        };
+        utterance.onend = () => {
+          console.log('Speech ended');
+          setIsPlaying(false);
+          setIsPaused(false);
+        };
+        utterance.onerror = (event) => {
+          console.error('Speech error:', event);
+          setIsPlaying(false);
+          setIsPaused(false);
+        };
+        utterance.onpause = () => {
+          console.log('Speech paused');
+          setIsPaused(true);
+        };
+        utterance.onresume = () => {
+          console.log('Speech resumed');
+          setIsPaused(false);
+        };
 
-        synthRef.current.cancel();
         synthRef.current.speak(utterance);
         console.log('Speech synthesis initiated');
       } catch (error) {
         console.error('Error with native speech synthesis:', error);
+        setIsPlaying(false);
+        setIsPaused(false);
       }
       return;
     }
@@ -386,19 +484,38 @@ export function useTextToSpeech() {
       console.log(`Audio downloaded: ${audioUrl}`);
 
       const audio = new Audio(audioUrl);
+      audioRef.current = audio;
       
-      // Add event listeners for debugging
+      // Add event listeners for debugging and state management
       audio.onloadstart = () => console.log('Audio loading started');
       audio.oncanplay = () => console.log('Audio can play');
-      audio.onplay = () => console.log('Audio playback started');
-      audio.onended = () => console.log('Audio playback ended');
-      audio.onerror = (error) => console.error('Audio error:', error);
+      audio.onplay = () => {
+        console.log('Audio playback started');
+        setIsPlaying(true);
+        setIsPaused(false);
+      };
+      audio.onended = () => {
+        console.log('Audio playback ended');
+        setIsPlaying(false);
+        setIsPaused(false);
+      };
+      audio.onerror = (error) => {
+        console.error('Audio error:', error);
+        setIsPlaying(false);
+        setIsPaused(false);
+      };
+      audio.onpause = () => {
+        console.log('Audio paused');
+        setIsPaused(true);
+      };
       
       console.log('Playing audio...');
       await audio.play();
       console.log('Audio play command executed');
     } catch (error) {
       console.error("Error with CAMB.AI TTS:", error);
+      setIsPlaying(false);
+      setIsPaused(false);
       
       // Provide detailed error information for debugging
       if (error instanceof Error) {
@@ -411,7 +528,15 @@ export function useTextToSpeech() {
     }
     
     console.log('=== END SPEAK FUNCTION ===');
-  }, []);
+  }, [stop]);
 
-  return { isSupported, speak };
+  return { 
+    isSupported, 
+    speak, 
+    stop, 
+    pause, 
+    resume, 
+    isPlaying, 
+    isPaused 
+  };
 }

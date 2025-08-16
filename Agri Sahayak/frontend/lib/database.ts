@@ -31,24 +31,24 @@ export async function getDb() {
     )
   `);
 
-  // Check for the 'state' column to see if migrations are needed.
+  // Check for the 'state_id' column to see if migrations are needed.
   const columns = await newDb.all("PRAGMA table_info(users)");
-  const hasStateColumn = columns.some(col => col.name === 'state');
+  const hasStateIdColumn = columns.some(col => col.name === 'state_id');
 
   // If the column doesn't exist, alter the table to add the new columns.
-  if (!hasStateColumn) {
-    console.log("Updating database schema: adding 'state' and 'district' columns.");
-    await newDb.exec("ALTER TABLE users ADD COLUMN state TEXT");
-    await newDb.exec("ALTER TABLE users ADD COLUMN district TEXT");
+  if (!hasStateIdColumn) {
+    console.log("Updating database schema: adding 'state_id' and 'district_id' columns.");
+    await newDb.exec("ALTER TABLE users ADD COLUMN state_id INTEGER");
+    await newDb.exec("ALTER TABLE users ADD COLUMN district_id INTEGER");
   }
-
 
   // For convenience, let's add a default admin user if the table is empty.
   const userCount = await newDb.get('SELECT COUNT(*) as count FROM users');
   if (userCount.count === 0) {
     const saltRounds = 10;
     const adminPasswordHash = await bcrypt.hash('password', saltRounds);
-    await newDb.run('INSERT INTO users (username, passwordHash, state, district) VALUES (?, ?, ?, ?)', 'admin', adminPasswordHash, 'Uttar Pradesh', 'Kanpur');
+    await newDb.run('INSERT INTO users (username, passwordHash, state_id, district_id) VALUES (?, ?, ?, ?)', 
+      'admin', adminPasswordHash, 8, 104); // Uttar Pradesh (8), Kanpur Nagar (104)
     console.log('Default admin user created with password "password"');
   }
 

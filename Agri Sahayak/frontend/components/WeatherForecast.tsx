@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/lib/LanguageContext';
+import { useDataCache } from '@/lib/DataCacheContext';
 import { 
   fetchWeatherData, 
   getCurrentLocation, 
@@ -24,8 +25,8 @@ import {
 import { Line, Bar } from 'react-chartjs-2';
 import { format, type Locale } from 'date-fns';
 import { enUS, hi, te, ta } from 'date-fns/locale';
-import pa from '@/lib/locales/pa'; // Import custom Punjabi locale
-import mr from '@/lib/locales/mr'; // Import custom Marathi locale
+import pa from '@/lib/locales/pa';
+import mr from '@/lib/locales/mr';
 
 ChartJS.register(
   CategoryScale,
@@ -38,7 +39,6 @@ ChartJS.register(
   Legend
 );
 
-// Add the custom locales to the mapping
 const dateLocales: { [key: string]: Locale } = {
   en: enUS,
   hi: hi,
@@ -50,8 +50,16 @@ const dateLocales: { [key: string]: Locale } = {
 
 export default function WeatherForecast() {
   const { t, language } = useLanguage();
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-  const [location, setLocation] = useState<LocationData | null>(null);
+  const {
+    weatherData: cachedWeatherData,
+    locationData: cachedLocationData,
+    setWeatherData,
+    setLocationData,
+    isWeatherDataCached
+  } = useDataCache();
+
+  const [weatherData, setWeatherDataLocal] = useState<WeatherData | null>(null);
+  const [location, setLocationLocal] = useState<LocationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [locationPermission, setLocationPermission] = useState<boolean | null>(null);
@@ -65,11 +73,34 @@ export default function WeatherForecast() {
     setError('');
 
     try {
-      const userLocation = await getCurrentLocation();
-      setLocation(userLocation);
+      // Check if we have cached location data
+      let userLocation: LocationData;
+      if (cachedLocationData) {
+        userLocation = cachedLocationData;
+        setLocationLocal(userLocation);
+      } else {
+        userLocation = await getCurrentLocation();
+        setLocationData(userLocation);
+        setLocationLocal(userLocation);
+      }
+
       setLocationPermission(true);
+
+      // Create cache key based on location
+      const cacheKey = `${userLocation.latitude.toFixed(4)}-${userLocation.longitude.toFixed(4)}`;
+
+      // Check if weather data is cached
+      if (isWeatherDataCached(cacheKey)) {
+        const cachedData = cachedWeatherData[cacheKey];
+        setWeatherDataLocal(cachedData);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch new weather data
       const data = await fetchWeatherData(userLocation.latitude, userLocation.longitude);
-      setWeatherData(data);
+      setWeatherDataLocal(data);
+      setWeatherData(cacheKey, data);
     } catch (err) {
       console.error('Weather data error:', err);
       setError(err instanceof Error ? err.message : 'Failed to load weather data');

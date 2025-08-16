@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     }
 
     const db = await getDb();
-    const user = await db.get('SELECT username, state, district FROM users WHERE username = ?', username);
+    const user = await db.get('SELECT username, state_id, district_id FROM users WHERE username = ?', username);
 
     if (!user) {
       return NextResponse.json({ message: 'User not found.' }, { status: 404 });

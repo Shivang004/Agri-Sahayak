@@ -42,6 +42,14 @@ export const translations = {
     averagePrice: 'Average Price',
     averageQuantity: 'Average Quantity',
     dataPoints: 'Data Points',
+    modalPrice: 'Modal Price',
+    arrivalQuantity: 'Arrival Quantity',
+    currentPrices: 'Current Prices',
+    currentArrival: 'Current Arrival',
+    minPrice: 'Min Price',
+    maxPrice: 'Max Price',
+    asOf: 'As of',
+    averageModalPrice: 'Average Modal Price',
     
     // Weather
     currentWeather: 'Current Weather',
@@ -145,6 +153,21 @@ export const translations = {
     considerWeatherHarvest: 'Consider weather conditions for harvest timing',
 
     welcomeMessage: 'How may I help you today?',
+    
+    // Profile
+    'User Profile': 'User Profile',
+    'Username': 'Username',
+    'Password': 'Password',
+    'Change Password': 'Change Password',
+    'Enter New Password': 'Enter New Password',
+    'Change Location': 'Change Location',
+    'Current Location': 'Current Location',
+    'Update Profile': 'Update Profile',
+    'Back To Home': 'Back To Home',
+    'Create Your Account': 'Create Your Account',
+    'Signup': 'Signup',
+    'Already Have An Account': 'Already Have An Account',
+    'login': 'login',
   },
   
   hi: {
@@ -179,6 +202,14 @@ export const translations = {
     averagePrice: 'औसत मूल्य',
     averageQuantity: 'औसत मात्रा',
     dataPoints: 'डेटा बिंदु',
+    modalPrice: 'मोडल मूल्य',
+    arrivalQuantity: 'आगमन मात्रा',
+    currentPrices: 'वर्तमान मूल्य',
+    currentArrival: 'वर्तमान आगमन',
+    minPrice: 'न्यूनतम मूल्य',
+    maxPrice: 'अधिकतम मूल्य',
+    asOf: 'जैसा कि',
+    averageModalPrice: 'औसत मोडल मूल्य',
     
     // Weather
     currentWeather: 'वर्तमान मौसम',
@@ -282,6 +313,21 @@ export const translations = {
     considerWeatherHarvest: 'कटाई के समय के लिए मौसम की स्थिति पर विचार करें',
 
     welcomeMessage: 'आज मैं आपकी क्या सहायता कर सकता हूँ?',
+    
+    // Profile
+    'User Profile': 'उपयोगकर्ता प्रोफ़ाइल',
+    'Username': 'उपयोगकर्ता नाम',
+    'Password': 'पासवर्ड',
+    'Change Password': 'पासवर्ड बदलें',
+    'Enter New Password': 'नया पासवर्ड दर्ज करें',
+    'Change Location': 'स्थान बदलें',
+    'Current Location': 'वर्तमान स्थान',
+    'Update Profile': 'प्रोफ़ाइल अपडेट करें',
+    'Back To Home': 'होम पर वापस जाएं',
+    'Create Your Account': 'अपना खाता बनाएं',
+    'Signup': 'साइनअप',
+    'Already Have An Account': 'पहले से ही खाता है',
+    'login': 'लॉगिन',
   },
   
   pa: {

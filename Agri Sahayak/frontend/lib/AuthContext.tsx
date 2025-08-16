@@ -7,18 +7,18 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: { username: string, state: string, district: string } | null;
+  user: { username: string, state_id: number, district_id: number } | null;
   login: (user: string, pass: string) => Promise<boolean>;
   logout: () => void;
-  signup: (user: string, pass: string, state: string, district: string) => Promise<boolean>;
-  updateUser: (userData: { username: string, password?: string, state: string, district: string }) => Promise<boolean>;
+  signup: (user: string, pass: string, state_id: number, district_id: number) => Promise<boolean>;
+  updateUser: (userData: { username: string, password?: string, state_id: number, district_id: number }) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<{ username: string, state: string, district: string } | null>(null);
+  const [user, setUser] = useState<{ username: string, state_id: number, district_id: number } | null>(null);
 
   const fetchUserData = async (username: string) => {
     try {
@@ -43,12 +43,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const signup = async (username: string, pass: string, state: string, district: string): Promise<boolean> => {
+  const signup = async (username: string, pass: string, state_id: number, district_id: number): Promise<boolean> => {
     try {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password: pass, state, district }),
+        body: JSON.stringify({ username, password: pass, state_id, district_id }),
       });
 
       if (!response.ok) {
@@ -95,7 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
-  const updateUser = async (userData: { username: string, password?: string, state: string, district: string }): Promise<boolean> => {
+  const updateUser = async (userData: { username: string, password?: string, state_id: number, district_id: number }): Promise<boolean> => {
     try {
       const response = await fetch('/api/auth/update', {
         method: 'POST',
@@ -109,7 +109,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return false;
       }
 
-      setUser({ username: userData.username, state: userData.state, district: userData.district });
+      setUser({ username: userData.username, state_id: userData.state_id, district_id: userData.district_id });
       return true;
     } catch (error) {
       console.error('Update fetch error:', error);

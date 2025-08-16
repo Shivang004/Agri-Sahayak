@@ -1,21 +1,62 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import { useLanguage } from '@/lib/LanguageContext';
+import { fetchStates, fetchDistricts, type State, type District } from '@/lib/marketApi';
 
 export default function Signup({ onSwitchToLogin }: { onSwitchToLogin: () => void }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [state, setState] = useState('');
-  const [district, setDistrict] = useState('');
+  const [states, setStates] = useState<State[]>([]);
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [selectedState, setSelectedState] = useState<number | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<number | null>(null);
   const { signup } = useAuth();
   const { t } = useLanguage();
 
+  useEffect(() => {
+    loadStates();
+  }, []);
+
+  useEffect(() => {
+    if (selectedState) {
+      loadDistricts(selectedState);
+    } else {
+      setDistricts([]);
+      setSelectedDistrict(null);
+    }
+  }, [selectedState]);
+
+  const loadStates = async () => {
+    try {
+      const statesData = await fetchStates();
+      setStates(statesData);
+    } catch (error) {
+      console.error('Failed to load states:', error);
+    }
+  };
+
+  const loadDistricts = async (stateId: number) => {
+    try {
+      const districtsData = await fetchDistricts(stateId);
+      setDistricts(districtsData);
+      if (districtsData.length > 0) {
+        setSelectedDistrict(districtsData[0].district_id);
+      }
+    } catch (error) {
+      console.error('Failed to load districts:', error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await signup(username, password, state, district);
+    if (!selectedState || !selectedDistrict) {
+      alert('Please select both state and district');
+      return;
+    }
+    const success = await signup(username, password, selectedState, selectedDistrict);
     if (success) {
       alert('Signup successful! Please log in.');
       onSwitchToLogin();
@@ -81,29 +122,42 @@ export default function Signup({ onSwitchToLogin }: { onSwitchToLogin: () => voi
             <label htmlFor="state" className="text-sm font-medium text-gray-700">
               State
             </label>
-            <input
+            <select
               id="state"
               name="state"
-              type="text"
               required
               className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-            />
+              value={selectedState || ''}
+              onChange={(e) => setSelectedState(Number(e.target.value) || null)}
+            >
+              <option value="">Select State</option>
+              {states.map(state => (
+                <option key={state.state_id} value={state.state_id}>
+                  {state.state_name}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label htmlFor="district" className="text-sm font-medium text-gray-700">
               District
             </label>
-            <input
+            <select
               id="district"
               name="district"
-              type="text"
               required
               className="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
-              value={district}
-              onChange={(e) => setDistrict(e.target.value)}
-            />
+              value={selectedDistrict || ''}
+              onChange={(e) => setSelectedDistrict(Number(e.target.value) || null)}
+              disabled={!selectedState}
+            >
+              <option value="">Select District</option>
+              {districts.map(district => (
+                <option key={district.district_id} value={district.district_id}>
+                  {district.district_name}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <button
