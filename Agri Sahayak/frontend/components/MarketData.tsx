@@ -17,6 +17,11 @@ import {
   type PriceData,
   type QuantityData
 } from '@/lib/marketApi';
+import { 
+  getCommodityName, 
+  getStateName, 
+  getDistrictName 
+} from '@/lib/localData';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -141,12 +146,10 @@ export default function MarketData() {
     }
   }, [selectedState, isDistrictsCached, cachedDistricts, selectedDistrict]);
 
-  const loadInitialData = async () => {
+  const loadInitialData = () => {
     try {
-      const [commoditiesData, statesData] = await Promise.all([
-        fetchCommodities(),
-        fetchStates()
-      ]);
+      const commoditiesData = fetchCommodities();
+      const statesData = fetchStates();
       setCommodities(commoditiesData);
       setStates(statesData);
       if (commoditiesData.length > 0 && !selectedCommodity) {
@@ -157,9 +160,9 @@ export default function MarketData() {
     }
   };
 
-  const loadDistricts = async (stateId: number) => {
+  const loadDistricts = (stateId: number) => {
     try {
-      const districtsData = await fetchDistricts(stateId);
+      const districtsData = fetchDistricts(stateId);
       setDistricts(stateId, districtsData);
       if (districtsData.length > 0 && !selectedDistrict) {
         setSelectedDistrictLocal(districtsData[0].district_id);
@@ -212,20 +215,17 @@ export default function MarketData() {
     }
   };
 
-  const getCommodityName = (commodityId: number) => {
-    const commodity = cachedCommodities.find(c => c.commodity_id === commodityId);
-    return commodity?.commodity_name || 'Unknown';
+  const getCommodityNameLocal = (commodityId: number) => {
+    return getCommodityName(commodityId);
   };
 
-  const getStateName = (stateId: number) => {
-    const state = cachedStates.find(s => s.state_id === stateId);
-    return state?.state_name || 'Unknown';
+  const getStateNameLocal = (stateId: number) => {
+    return getStateName(stateId);
   };
 
-  const getDistrictName = (districtId: number) => {
+  const getDistrictNameLocal = (districtId: number) => {
     if (!selectedState) return 'Unknown';
-    const district = cachedDistricts[selectedState]?.find((d: District) => d.district_id === districtId);
-    return district?.district_name || 'Unknown';
+    return getDistrictName(selectedState, districtId);
   };
 
   // Aggregate data by date for plotting
@@ -416,7 +416,7 @@ export default function MarketData() {
                   legend: { display: true },
                   title: {
                     display: true,
-                    text: `${getCommodityName(selectedCommodity!)} - ${t('modalPrice')}`
+                    text: `${getCommodityNameLocal(selectedCommodity!)} - ${t('modalPrice')}`
                   }
                 },
                 scales: {
@@ -451,7 +451,7 @@ export default function MarketData() {
                   legend: { display: true },
                   title: {
                     display: true,
-                    text: `${getCommodityName(selectedCommodity!)} - ${t('arrivalQuantity')}`
+                    text: `${getCommodityNameLocal(selectedCommodity!)} - ${t('arrivalQuantity')}`
                   }
                 },
                 scales: {

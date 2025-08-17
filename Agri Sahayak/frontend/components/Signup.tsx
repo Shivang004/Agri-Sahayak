@@ -29,18 +29,18 @@ export default function Signup({ onSwitchToLogin }: { onSwitchToLogin: () => voi
     }
   }, [selectedState]);
 
-  const loadStates = async () => {
+  const loadStates = () => {
     try {
-      const statesData = await fetchStates();
+      const statesData = fetchStates();
       setStates(statesData);
     } catch (error) {
       console.error('Failed to load states:', error);
     }
   };
 
-  const loadDistricts = async (stateId: number) => {
+  const loadDistricts = (stateId: number) => {
     try {
-      const districtsData = await fetchDistricts(stateId);
+      const districtsData = fetchDistricts(stateId);
       setDistricts(districtsData);
       if (districtsData.length > 0) {
         setSelectedDistrict(districtsData[0].district_id);

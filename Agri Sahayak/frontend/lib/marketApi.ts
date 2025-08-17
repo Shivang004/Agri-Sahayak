@@ -1,17 +1,8 @@
-export interface Commodity {
-  commodity_id: number;
-  commodity_name: string;
-}
+// Import local data functions and types
+import { getCommodities, getStates, getDistricts, type Commodity, type State, type District } from './localData';
 
-export interface State {
-  state_id: number;
-  state_name: string;
-}
-
-export interface District {
-  district_id: number;
-  district_name: string;
-}
+// Re-export types from localData
+export type { Commodity, State, District } from './localData';
 
 export interface PriceData {
   date: string;
@@ -39,49 +30,19 @@ export interface MarketDataResponse {
 
 const API_BASE = 'http://localhost:8000/api/data';
 
-// Fetch commodities from backend
-export async function fetchCommodities(): Promise<Commodity[]> {
-  try {
-    const response = await fetch(`${API_BASE}/commodities`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data.commodities || [];
-  } catch (error) {
-    console.error('Error fetching commodities:', error);
-    return [];
-  }
+// Get commodities from local data
+export function fetchCommodities(): Commodity[] {
+  return getCommodities();
 }
 
-// Fetch states from backend
-export async function fetchStates(): Promise<State[]> {
-  try {
-    const response = await fetch(`${API_BASE}/states`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data.states || [];
-  } catch (error) {
-    console.error('Error fetching states:', error);
-    return [];
-  }
+// Get states from local data
+export function fetchStates(): State[] {
+  return getStates();
 }
 
-// Fetch districts for a specific state
-export async function fetchDistricts(stateId: number): Promise<District[]> {
-  try {
-    const response = await fetch(`${API_BASE}/districts/${stateId}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data.districts || [];
-  } catch (error) {
-    console.error('Error fetching districts:', error);
-    return [];
-  }
+// Get districts for a specific state from local data
+export function fetchDistricts(stateId: number): District[] {
+  return getDistricts(stateId);
 }
 
 // Fetch prices from backend

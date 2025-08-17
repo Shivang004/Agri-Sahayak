@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import { useLanguage } from '@/lib/LanguageContext';
 import { fetchStates, fetchDistricts, type State, type District } from '@/lib/marketApi';
+import { getStateName, getDistrictName } from '@/lib/localData';
 import Link from 'next/link';
 
 export default function ProfilePage() {
@@ -32,18 +33,18 @@ export default function ProfilePage() {
     }
   }, [selectedState]);
 
-  const loadStates = async () => {
+  const loadStates = () => {
     try {
-      const statesData = await fetchStates();
+      const statesData = fetchStates();
       setStates(statesData);
     } catch (error) {
       console.error('Failed to load states:', error);
     }
   };
 
-  const loadDistricts = async (stateId: number) => {
+  const loadDistricts = (stateId: number) => {
     try {
-      const districtsData = await fetchDistricts(stateId);
+      const districtsData = fetchDistricts(stateId);
       setDistricts(districtsData);
       if (districtsData.length > 0 && !selectedDistrict) {
         setSelectedDistrict(districtsData[0].district_id);
@@ -76,15 +77,7 @@ export default function ProfilePage() {
     setPassword('');
   };
 
-  const getStateName = (stateId: number) => {
-    const state = states.find(s => s.state_id === stateId);
-    return state?.state_name || 'Unknown';
-  };
-
-  const getDistrictName = (districtId: number) => {
-    const district = districts.find(d => d.district_id === districtId);
-    return district?.district_name || 'Unknown';
-  };
+  // Using imported functions from localData
 
   if (!user) {
     return (
@@ -151,7 +144,7 @@ export default function ProfilePage() {
           <div>
             <label className="text-sm font-medium text-gray-700">{t('Current Location')}</label>
             <p className="mt-1 text-lg">
-              {getStateName(user.state_id)}, {getDistrictName(user.district_id)}
+              {getStateName(user.state_id)}, {getDistrictName(user.state_id, user.district_id)}
             </p>
             <button
               onClick={() => setIsEditingLocation(!isEditingLocation)}
