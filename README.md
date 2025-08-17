@@ -137,6 +137,7 @@ The backend's intelligence is driven by a team of specialized AI agents, each wi
 ## Technology Stack
 ### Frontend
 - **Framework**: Next.js 14 with TypeScript
+- **Database**: Sqlite for User information for SignIn/Login
 
 - **Styling**: Tailwind CSS
 
@@ -151,7 +152,7 @@ The backend's intelligence is driven by a team of specialized AI agents, each wi
 
 - **Multi-Agent Framework**: Agno, LangGraph
 
-- **Database**: FAISS for the vector store, Postgres for document mapping.
+- **Database**: FAISS for the vector store, Sqlite for document mapping.
 
 - **Core Dependencies**: fastapi, uvicorn, google-generativeai, faiss-cpu, langchain, langgraph
 
