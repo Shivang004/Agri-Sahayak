@@ -22,6 +22,39 @@ from tools.weather_tools import get_comprehensive_agri_report
 from models import (    PricesRequest, QuantitiesRequest,
 )
 
+def get_state_name_from_id(state_id: int) -> str:
+    """
+    Get state name from state_id using geographies.json file.
+    Returns 'India' if state_id not found.
+    """
+    try:
+        with open('geographies.json', 'r', encoding='utf-8') as f:
+            geographies = json.load(f)
+        
+        # Find the first entry with matching state_id
+        for geo in geographies:
+            if geo.get('census_state_id') == state_id:
+                return geo.get('census_state_name', 'India')
+        
+        return 'India'  # Default fallback
+    except Exception as e:
+        print(f"Error reading geographies.json: {e}")
+        return 'India'
+
+def get_location_context(user_context: dict) -> str:
+    """
+    Generate location context string from user_context.
+    Returns format like 'UP, India' or 'India' if no state info.
+    """
+    if not user_context or 'state_id' not in user_context:
+        return 'India'
+    
+    state_name = get_state_name_from_id(user_context['state_id'])
+    if state_name == 'India':
+        return 'India'
+    
+    return f"{state_name}, India"
+
 def get_price_plot_base64(
     commodity_id: int,
     state_id: int,
@@ -216,7 +249,12 @@ def run_sarpanch(state: AgentState):
     print(f"Input query: {state['original_query']}")
     print(f"Target language: {state['target_language']}")
     
-    response = sarpanch_agent.run(state['original_query'])
+    location_context = get_location_context(state['user_context'])
+    print(f"Location context for Sarpanch: {location_context}")
+
+    # Pass location context along with query to sarpanch
+    enhanced_query = f"{state['original_query']} | Location: {location_context}"
+    response = sarpanch_agent.run(enhanced_query)
     print(f"Sarpanch agent response.content: {response.content}")
     
     # Clean the response content by removing markdown code blocks
